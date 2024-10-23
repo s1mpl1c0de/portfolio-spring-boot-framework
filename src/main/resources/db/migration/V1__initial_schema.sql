@@ -1,4 +1,3 @@
-DROP TABLE IF EXISTS Experience;
 
 CREATE TABLE Experiences (
     id BIGSERIAL PRIMARY KEY,
