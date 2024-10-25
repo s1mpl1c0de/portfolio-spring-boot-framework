@@ -1,5 +1,16 @@
-CREATE TABLE Experiences (
+CREATE TABLE users (
+    id              BIGSERIAL PRIMARY KEY,
+    username        VARCHAR(100) UNIQUE NOT NULL,
+    first_name      VARCHAR(100) NOT NULL,
+    last_name       VARCHAR(100) NOT NULL,
+    email           VARCHAR(100) NOT NULL,
+    password        VARCHAR(100) NOT NULL,
+    is_enable       BOOLEAN NOT NULL
+);
+
+CREATE TABLE experiences (
     id                      BIGSERIAL PRIMARY KEY,
+    user_id                 BIGINT NOT NULL REFERENCES users (id) ON DELETE CASCADE,
     job_title               VARCHAR(100) NOT NULL,
     company_name            VARCHAR(255) NOT NULL,
     started_month           SMALLINT NOT NULL CHECK (started_month BETWEEN 1 AND 12),
