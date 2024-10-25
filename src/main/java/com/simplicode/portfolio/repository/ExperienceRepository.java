@@ -104,7 +104,7 @@ public class ExperienceRepository {
     }
 
     public void deleteById(Long id) {
-        String sql = "DELETE FROM experiences WHERE id";
+        String sql = "DELETE FROM experiences WHERE id = ?";
         jdbcTemplate.update(sql, id);
     }
 
