@@ -9,31 +9,31 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.StringJoiner;
 
 @Repository
 @RequiredArgsConstructor
 public class ExperienceRepository {
 
     private final JdbcTemplate jdbcTemplate;
-    private static final String EXPERIENCES = "experiences";
-    private static final String ID = "id";
-    private static final String JOB_TITLE = "job_title";
-    private static final String COMPANY_NAME = "company_name";
-    private static final String STARTED_MONTH = "started_month";
-    private static final String STARTED_YEAR = "started_year";
-    private static final String ENDED_MONTH = "ended_month";
-    private static final String ENDED_YEAR = "ended_year";
-    private static final String IS_STILL_IN_ROLE = "is_still_in_role";
-    private static final String DESCRIPTION = "description";
-    private static final String CREATED_DATE = "created_date";
-    private static final String LAST_MODIFIED_DATE = "last_modified_date";
 
     public void save(Experience experience) {
-        String sql = String.format(
-           "INSERT INTO %s (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-           EXPERIENCES, JOB_TITLE, COMPANY_NAME, STARTED_MONTH, STARTED_YEAR, ENDED_MONTH,
-           ENDED_YEAR, IS_STILL_IN_ROLE, DESCRIPTION, CREATED_DATE, LAST_MODIFIED_DATE
-        );
+        String sql = new StringJoiner(
+           " ",
+           "INSERT INTO experiences (",
+           ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+        )
+           .add("job_title,")
+           .add("company_name,")
+           .add("started_month,")
+           .add("started_year,")
+           .add("ended_month,")
+           .add("ended_year,")
+           .add("is_still_in_role,")
+           .add("description,")
+           .add("created_date,")
+           .add("last_modified_date")
+           .toString();
 
         Object[] args = new Object[]{
            experience.getJobTitle(),
@@ -52,21 +52,40 @@ public class ExperienceRepository {
     }
 
     public List<Experience> findAll() {
-        String sql = String.format("SELECT * FROM %s ORDER BY %s DESC", EXPERIENCES, CREATED_DATE);
+        String sql = new StringJoiner(
+           " ",
+           "SELECT * FROM experiences ORDER BY ",
+           "LIMIT 30"
+        )
+           .add("is_still_in_role DESC,")
+           .add("started_year DESC,")
+           .add("started_month DESC ")
+           .toString();
+
         return jdbcTemplate.query(sql, new ExperienceMapper());
     }
 
     public Optional<Experience> findById(Long id) {
-        String sql = String.format("SELECT * FROM %s WHERE %s = ? LIMIT 1", EXPERIENCES, ID);
+        String sql = "SELECT * FROM experiences WHERE id = ? LIMIT 1";
         return jdbcTemplate.query(sql, new ExperienceMapper(), id).stream().findFirst();
     }
 
     public void updateById(Long id, Experience experience) {
-        String sql = String.format(
-           "UPDATE %s SET %s = ?, %s = ?, %s = ?, %s = ?, %s = ?, %s = ?, %s = ?, %s = ?, %s = ? WHERE %s = ?",
-           EXPERIENCES, JOB_TITLE, COMPANY_NAME, STARTED_MONTH, STARTED_YEAR, ENDED_MONTH,
-           ENDED_YEAR, IS_STILL_IN_ROLE, DESCRIPTION, LAST_MODIFIED_DATE, ID
-        );
+        String sql = new StringJoiner(
+           " ",
+           "UPDATE experiences SET ",
+           "WHERE id = ?"
+        )
+           .add("job_title = ?,")
+           .add("company_name = ?,")
+           .add("started_month = ?,")
+           .add("started_year = ?,")
+           .add("ended_month = ?,")
+           .add("ended_year = ?,")
+           .add("is_still_in_role = ?,")
+           .add("description = ?,")
+           .add("last_modified_date = ? ")
+           .toString();
 
         Object[] args = new Object[]{
            experience.getJobTitle(),
@@ -85,7 +104,7 @@ public class ExperienceRepository {
     }
 
     public void deleteById(Long id) {
-        String sql = String.format("DELETE FROM %s WHERE %s = ?", EXPERIENCES, ID);
+        String sql = "DELETE FROM experiences WHERE id";
         jdbcTemplate.update(sql, id);
     }
 
