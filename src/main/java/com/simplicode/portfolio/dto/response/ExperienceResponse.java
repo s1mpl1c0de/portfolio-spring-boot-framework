@@ -16,10 +16,6 @@ public class ExperienceResponse {
     private Long id;
     private String jobTitle;
     private String companyName;
-    private String startedMonth;
-    private Short startedYear;
-    private String endedMonth;
-    private Short endedYear;
     private Boolean isStillInRole;
     private String description;
     private LocalDateTime createdDate;
