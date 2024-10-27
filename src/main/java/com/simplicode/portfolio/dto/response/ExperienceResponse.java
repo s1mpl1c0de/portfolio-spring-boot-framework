@@ -16,6 +16,7 @@ public class ExperienceResponse {
     private Long id;
     private String jobTitle;
     private String companyName;
+    private String period;
     private Boolean isStillInRole;
     private String description;
     private LocalDateTime createdDate;
