@@ -24,5 +24,6 @@ public class Experience {
     private String description;
     private LocalDateTime createdDate;
     private LocalDateTime lastModifiedDate;
+    private Long userId;
 
 }
