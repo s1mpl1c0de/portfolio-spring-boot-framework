@@ -43,5 +43,6 @@ public class ExperienceRequest {
     private Short endedYear;
 
     private String description;
+    private Long userId;
 
 }
