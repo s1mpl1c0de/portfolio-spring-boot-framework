@@ -49,10 +49,10 @@ public class ExperienceService {
     public void updateById(Long id, ExperienceRequest experienceRequest) {
         ExperienceResponse experienceResponse = findById(id);
 
-        experienceRepository.updateById(
-           experienceResponse.getId(),
-           modelMapper.map(experienceRequest, Experience.class)
-        );
+        Experience experience = modelMapper.map(experienceRequest, Experience.class)
+           .setLastModifiedDate(LocalDateTime.now());
+
+        experienceRepository.updateById(experienceResponse.getId(), experience);
     }
 
     public void deleteById(Long id) {
