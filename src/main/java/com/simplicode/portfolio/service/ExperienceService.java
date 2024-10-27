@@ -42,7 +42,8 @@ public class ExperienceService {
         Experience experience = experienceRepository.findById(id)
            .orElseThrow(() -> new NotFoundException("Experience not found"));
 
-        return modelMapper.map(experience, ExperienceResponse.class);
+        return modelMapper.map(experience, ExperienceResponse.class)
+           .setPeriod(getPeriod(experience));
     }
 
     public void updateById(Long id, ExperienceRequest experienceRequest) {
