@@ -23,7 +23,7 @@ public class User implements UserDetails {
     private String lastName;
     private String email;
     private String password;
-    private Boolean isEnable;
+    private Boolean isEnabled;
 
     public String getFullName() {
         return firstName + " " + lastName;
