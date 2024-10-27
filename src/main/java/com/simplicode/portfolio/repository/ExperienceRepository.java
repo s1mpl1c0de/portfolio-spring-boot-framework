@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.StringJoiner;
@@ -21,7 +20,7 @@ public class ExperienceRepository {
         String sql = new StringJoiner(
            " ",
            "INSERT INTO experiences (",
-           ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+           ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
         )
            .add("job_title,")
            .add("company_name,")
@@ -32,7 +31,8 @@ public class ExperienceRepository {
            .add("is_still_in_role,")
            .add("description,")
            .add("created_date,")
-           .add("last_modified_date")
+           .add("last_modified_date,")
+           .add("user_id")
            .toString();
 
         Object[] args = new Object[]{
@@ -44,17 +44,18 @@ public class ExperienceRepository {
            experience.getEndedYear(),
            experience.getIsStillInRole(),
            experience.getDescription(),
-           LocalDateTime.now(),
-           null
+           experience.getCreatedDate(),
+           experience.getLastModifiedDate(),
+           experience.getUserId()
         };
 
         jdbcTemplate.update(sql, args);
     }
 
-    public List<Experience> findAll() {
+    public List<Experience> findAllByUserId(Long userId) {
         String sql = new StringJoiner(
            " ",
-           "SELECT * FROM experiences ORDER BY ",
+           "SELECT * FROM experiences WHERE user_id = ? ORDER BY ",
            "LIMIT 30"
         )
            .add("is_still_in_role DESC,")
@@ -62,7 +63,7 @@ public class ExperienceRepository {
            .add("started_month DESC ")
            .toString();
 
-        return jdbcTemplate.query(sql, new ExperienceMapper());
+        return jdbcTemplate.query(sql, new ExperienceMapper(), userId);
     }
 
     public Optional<Experience> findById(Long id) {
@@ -96,7 +97,7 @@ public class ExperienceRepository {
            experience.getEndedYear(),
            experience.getIsStillInRole(),
            experience.getDescription(),
-           LocalDateTime.now(),
+           experience.getLastModifiedDate(),
            id
         };
 
