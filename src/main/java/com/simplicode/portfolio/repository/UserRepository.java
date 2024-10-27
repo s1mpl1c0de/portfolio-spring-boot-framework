@@ -27,7 +27,7 @@ public class UserRepository {
            .add("last_name,")
            .add("email,")
            .add("password,")
-           .add("is_enable")
+           .add("is_enabled")
            .toString();
 
         Object[] args = new Object[]{
@@ -36,7 +36,7 @@ public class UserRepository {
            user.getLastName(),
            user.getEmail(),
            user.getPassword(),
-           user.getIsEnable()
+           user.getIsEnabled()
         };
 
         jdbcTemplate.update(sql, args);
