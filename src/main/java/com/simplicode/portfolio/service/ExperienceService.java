@@ -10,28 +10,33 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class ExperienceService {
 
-    private final ModelMapper modelMapper;
-    private final ExperienceRepository experienceRepository;
     private final CalendarService calendarService;
+    private final ExperienceRepository experienceRepository;
+    private final ModelMapper modelMapper;
+    private final UserService userService;
 
     public void save(ExperienceRequest experienceRequest) {
-        experienceRepository.save(modelMapper.map(experienceRequest, Experience.class));
+        Experience experience = modelMapper.map(experienceRequest, Experience.class)
+           .setCreatedDate(LocalDateTime.now())
+           .setLastModifiedDate(null)
+           .setUserId(userService.getRequestUserId());
+
+        experienceRepository.save(experience);
     }
 
     public GlobalResponse findAll() {
-        List<ExperienceResponse> experienceResponses = experienceRepository.findAll().stream()
-           .map(experience -> {
-               ExperienceResponse experienceResponse = modelMapper.map(experience, ExperienceResponse.class);
-               experienceResponse.setStartedMonth(calendarService.getMonthAbbr(experience.getStartedMonth()));
-               experienceResponse.setEndedMonth(calendarService.getMonthAbbr(experience.getEndedMonth()));
-               return experienceResponse;
-           }).toList();
+        List<ExperienceResponse> experienceResponses = experienceRepository
+           .findAllByUserId(userService.getRequestUserId()).stream()
+           .map(experience -> modelMapper.map(experience, ExperienceResponse.class)
+              .setPeriod(getPeriod(experience))
+           ).toList();
 
         return new GlobalResponse()
            .setCount(experienceResponses.size())
