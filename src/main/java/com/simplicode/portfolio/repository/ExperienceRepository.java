@@ -20,7 +20,7 @@ public class ExperienceRepository {
         String sql = new StringJoiner(
            " ",
            "INSERT INTO experiences (",
-           ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+           ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
         )
            .add("job_title,")
            .add("company_name,")
@@ -31,7 +31,8 @@ public class ExperienceRepository {
            .add("is_still_in_role,")
            .add("description,")
            .add("created_date,")
-           .add("last_modified_date")
+           .add("last_modified_date,")
+           .add("user_id")
            .toString();
 
         Object[] args = new Object[]{
@@ -43,8 +44,9 @@ public class ExperienceRepository {
            experience.getEndedYear(),
            experience.getIsStillInRole(),
            experience.getDescription(),
-           LocalDateTime.now(),
-           null
+           experience.getCreatedDate(),
+           experience.getLastModifiedDate(),
+           experience.getUserId()
         };
 
         jdbcTemplate.update(sql, args);
