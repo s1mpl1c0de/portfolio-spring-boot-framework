@@ -1,6 +1,7 @@
 package com.simplicode.portfolio.controller;
 
 import com.simplicode.portfolio.dto.request.UserCreateRequest;
+import com.simplicode.portfolio.dto.request.UserUpdateRequest;
 import com.simplicode.portfolio.dto.response.GlobalResponse;
 import com.simplicode.portfolio.dto.response.UserResponse;
 import com.simplicode.portfolio.service.UserService;
@@ -31,6 +32,12 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> findById(@PathVariable Long id) {
         return new ResponseEntity<>(userService.findById(id), HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> updateById(@PathVariable Long id, @Valid @RequestBody UserUpdateRequest userUpdateRequest) {
+        userService.updateById(id, userUpdateRequest);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

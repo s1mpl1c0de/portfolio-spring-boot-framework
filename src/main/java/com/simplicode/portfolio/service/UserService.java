@@ -1,6 +1,7 @@
 package com.simplicode.portfolio.service;
 
 import com.simplicode.portfolio.dto.request.UserCreateRequest;
+import com.simplicode.portfolio.dto.request.UserUpdateRequest;
 import com.simplicode.portfolio.dto.response.GlobalResponse;
 import com.simplicode.portfolio.dto.response.UserResponse;
 import com.simplicode.portfolio.exception.NotFoundException;
@@ -51,6 +52,12 @@ public class UserService {
            .orElseThrow(() -> new NotFoundException("User not found"));
 
         return modelMapper.map(user, UserResponse.class);
+    }
+
+    public void updateById(Long id, UserUpdateRequest userUpdateRequest) {
+        UserResponse userResponse = findById(id);
+        User user = modelMapper.map(userUpdateRequest, User.class);
+        userRepository.updateById(userResponse.getId(), user);
     }
 
     public Long getRequestUserId() {
