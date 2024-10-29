@@ -57,4 +57,10 @@ public class UserRepository {
         return jdbcTemplate.query(sql, new UserMapper(), username).stream().findFirst();
     }
 
+    public void updateById(Long id, User user) {
+        String sql = "UPDATE users SET first_name = ?, last_name = ?, email = ? WHERE id = ?";
+        Object[] args = new Object[]{user.getFirstName(), user.getLastName(), user.getEmail(), id};
+        jdbcTemplate.update(sql, args);
+    }
+
 }
