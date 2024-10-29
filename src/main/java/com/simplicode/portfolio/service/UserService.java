@@ -1,6 +1,7 @@
 package com.simplicode.portfolio.service;
 
-import com.simplicode.portfolio.dto.request.UserRequest;
+import com.simplicode.portfolio.dto.request.UserCreateRequest;
+import com.simplicode.portfolio.dto.request.UserUpdateRequest;
 import com.simplicode.portfolio.dto.response.GlobalResponse;
 import com.simplicode.portfolio.dto.response.UserResponse;
 import com.simplicode.portfolio.exception.NotFoundException;
@@ -25,11 +26,11 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserValidation userValidation;
 
-    public void save(UserRequest userRequest) {
-        userValidation.validateUniqueUsername(userRequest.getUsername());
+    public void save(UserCreateRequest userCreateRequest) {
+        userValidation.validateUniqueUsername(userCreateRequest.getUsername());
 
-        User user = modelMapper.map(userRequest, User.class)
-           .setPassword(passwordEncoder.encode(userRequest.getPassword()))
+        User user = modelMapper.map(userCreateRequest, User.class)
+           .setPassword(passwordEncoder.encode(userCreateRequest.getPassword()))
            .setIsEnabled(true);
 
         userRepository.save(user);
@@ -51,6 +52,12 @@ public class UserService {
            .orElseThrow(() -> new NotFoundException("User not found"));
 
         return modelMapper.map(user, UserResponse.class);
+    }
+
+    public void updateById(Long id, UserUpdateRequest userUpdateRequest) {
+        UserResponse userResponse = findById(id);
+        User user = modelMapper.map(userUpdateRequest, User.class);
+        userRepository.updateById(userResponse.getId(), user);
     }
 
     public Long getRequestUserId() {
