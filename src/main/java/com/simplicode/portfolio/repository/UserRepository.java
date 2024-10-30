@@ -63,4 +63,9 @@ public class UserRepository {
         jdbcTemplate.update(sql, args);
     }
 
+    public void deleteById(Long id) {
+        String sql = "DELETE FROM users WHERE id = ?";
+        jdbcTemplate.update(sql, id);
+    }
+
 }
