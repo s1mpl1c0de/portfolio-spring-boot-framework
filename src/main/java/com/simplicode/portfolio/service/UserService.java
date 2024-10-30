@@ -60,6 +60,11 @@ public class UserService {
         userRepository.updateById(userResponse.getId(), user);
     }
 
+    public void deleteById(Long id) {
+        UserResponse userResponse = findById(id);
+        userRepository.deleteById(userResponse.getId());
+    }
+
     public Long getRequestUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !(authentication.getPrincipal() instanceof User user)) {
