@@ -19,7 +19,9 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<Void> save(@Valid @RequestBody UserCreateRequest userCreateRequest) {
+    public ResponseEntity<Void> save(
+       @Valid @RequestBody UserCreateRequest userCreateRequest
+    ) {
         userService.save(userCreateRequest);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -35,9 +37,18 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateById(@PathVariable Long id, @Valid @RequestBody UserUpdateRequest userUpdateRequest) {
+    public ResponseEntity<Void> updateById(
+       @PathVariable Long id,
+       @Valid @RequestBody UserUpdateRequest userUpdateRequest
+    ) {
         userService.updateById(id, userUpdateRequest);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
+        userService.deleteById(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 }
