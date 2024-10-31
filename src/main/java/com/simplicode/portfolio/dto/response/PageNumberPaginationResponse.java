@@ -15,6 +15,7 @@ public class PageNumberPaginationResponse {
 
     private Integer count;
     private String next;
+    private String previous;
     private List<?> results;
 
 }
