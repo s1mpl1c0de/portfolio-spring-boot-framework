@@ -2,7 +2,7 @@ package com.simplicode.portfolio.controller;
 
 import com.simplicode.portfolio.dto.request.UserCreateRequest;
 import com.simplicode.portfolio.dto.request.UserUpdateRequest;
-import com.simplicode.portfolio.dto.response.GlobalResponse;
+import com.simplicode.portfolio.dto.response.PageNumberPaginationResponse;
 import com.simplicode.portfolio.dto.response.UserResponse;
 import com.simplicode.portfolio.service.UserService;
 import jakarta.validation.Valid;
@@ -27,7 +27,7 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<GlobalResponse> findAll() {
+    public ResponseEntity<PageNumberPaginationResponse> findAll() {
         return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
     }
 

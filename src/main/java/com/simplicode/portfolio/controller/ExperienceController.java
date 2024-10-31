@@ -2,7 +2,7 @@ package com.simplicode.portfolio.controller;
 
 import com.simplicode.portfolio.dto.request.ExperienceRequest;
 import com.simplicode.portfolio.dto.response.ExperienceResponse;
-import com.simplicode.portfolio.dto.response.GlobalResponse;
+import com.simplicode.portfolio.dto.response.PageNumberPaginationResponse;
 import com.simplicode.portfolio.service.ExperienceService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ public class ExperienceController {
     }
 
     @GetMapping
-    public ResponseEntity<GlobalResponse> findAll() {
+    public ResponseEntity<PageNumberPaginationResponse> findAll() {
         return new ResponseEntity<>(experienceService.findAll(), HttpStatus.OK);
     }
 
