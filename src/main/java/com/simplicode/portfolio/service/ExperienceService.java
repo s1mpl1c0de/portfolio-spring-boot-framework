@@ -2,7 +2,7 @@ package com.simplicode.portfolio.service;
 
 import com.simplicode.portfolio.dto.request.ExperienceRequest;
 import com.simplicode.portfolio.dto.response.ExperienceResponse;
-import com.simplicode.portfolio.dto.response.GlobalResponse;
+import com.simplicode.portfolio.dto.response.PageNumberPaginationResponse;
 import com.simplicode.portfolio.exception.NotFoundException;
 import com.simplicode.portfolio.model.Experience;
 import com.simplicode.portfolio.repository.ExperienceRepository;
@@ -31,14 +31,14 @@ public class ExperienceService {
         experienceRepository.save(experience);
     }
 
-    public GlobalResponse findAll() {
+    public PageNumberPaginationResponse findAll() {
         List<ExperienceResponse> experienceResponses = experienceRepository
            .findAllByUserId(userService.getRequestUserId()).stream()
            .map(experience -> modelMapper.map(experience, ExperienceResponse.class)
               .setPeriod(getPeriod(experience))
            ).toList();
 
-        return new GlobalResponse()
+        return new PageNumberPaginationResponse()
            .setCount(experienceResponses.size())
            .setResults(experienceResponses);
     }
