@@ -14,6 +14,7 @@ import java.util.List;
 public class PageNumberPaginationResponse {
 
     private Integer count;
+    private String next;
     private List<?> results;
 
 }
