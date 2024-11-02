@@ -11,11 +11,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Accessors(chain = true)
-public class PageNumberPaginationResponse {
+public class PageNumberPaginationResponse<T> {
 
     private Integer count;
     private String next;
     private String previous;
-    private List<?> results;
+    private List<T> results;
 
 }

@@ -5,6 +5,7 @@ import com.simplicode.portfolio.dto.request.UserUpdateRequest;
 import com.simplicode.portfolio.dto.response.PageNumberPaginationResponse;
 import com.simplicode.portfolio.dto.response.UserResponse;
 import com.simplicode.portfolio.exception.NotFoundException;
+import com.simplicode.portfolio.model.Page;
 import com.simplicode.portfolio.model.User;
 import com.simplicode.portfolio.repository.UserRepository;
 import com.simplicode.portfolio.validation.UserValidation;
@@ -36,15 +37,21 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public PageNumberPaginationResponse findAll() {
-        List<UserResponse> userResponses = userRepository.findAll().stream()
+    public Integer countAll() {
+        return userRepository.countAll();
+    }
+
+    public PageNumberPaginationResponse<UserResponse> findAll(Page page) {
+        List<UserResponse> results = userRepository.findAll(page).stream()
            .map(user -> modelMapper.map(user, UserResponse.class)
               .setFullName(user.getFullName())
            ).toList();
 
-        return new PageNumberPaginationResponse()
-           .setCount(userResponses.size())
-           .setResults(userResponses);
+        return new PageNumberPaginationResponse<UserResponse>()
+           .setCount(results.size())
+           .setNext(page.getNext())
+           .setPrevious(page.getPrevious())
+           .setResults(results);
     }
 
     public UserResponse findById(Long id) {
