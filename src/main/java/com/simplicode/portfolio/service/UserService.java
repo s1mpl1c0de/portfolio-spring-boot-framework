@@ -37,6 +37,10 @@ public class UserService {
         userRepository.save(user);
     }
 
+    public Integer countAll() {
+        return userRepository.countAll();
+    }
+
     public PageNumberPaginationResponse<UserResponse> findAll(Page page) {
         List<UserResponse> results = userRepository.findAll(page).stream()
            .map(user -> modelMapper.map(user, UserResponse.class)

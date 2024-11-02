@@ -43,6 +43,11 @@ public class UserRepository {
         jdbcTemplate.update(sql, args);
     }
 
+    public Integer countAll() {
+        String sql = "SELECT COUNT(*) FROM users";
+        return jdbcTemplate.queryForObject(sql, Integer.class);
+    }
+
     public List<User> findAll(Page page) {
         String sql = "SELECT * FROM users ORDER BY id DESC LIMIT ? OFFSET ?";
         return jdbcTemplate.query(sql, new UserMapper(), page.getLimit(), page.getOffset());
