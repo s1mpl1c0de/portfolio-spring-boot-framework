@@ -1,6 +1,7 @@
 package com.simplicode.portfolio.repository;
 
 import com.simplicode.portfolio.mapper.UserMapper;
+import com.simplicode.portfolio.model.Page;
 import com.simplicode.portfolio.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -42,9 +43,9 @@ public class UserRepository {
         jdbcTemplate.update(sql, args);
     }
 
-    public List<User> findAll() {
-        String sql = "SELECT * FROM users ORDER BY id DESC";
-        return jdbcTemplate.query(sql, new UserMapper());
+    public List<User> findAll(Page page) {
+        String sql = "SELECT * FROM users ORDER BY id DESC LIMIT ? OFFSET ?";
+        return jdbcTemplate.query(sql, new UserMapper(), page.getLimit(), page.getOffset());
     }
 
     public Optional<User> findById(Long id) {
