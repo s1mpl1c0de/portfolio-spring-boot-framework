@@ -40,3 +40,5 @@ build/
 ### Docker Volumes ###
 docker/
 
+### Environment Variables ###
+.env
