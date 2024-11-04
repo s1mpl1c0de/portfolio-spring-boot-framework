@@ -19,15 +19,15 @@ public class UserRepository {
 
     public void save(User user) {
         String sql = new StringJoiner(
-           " ",
+           ", ",
            "INSERT INTO users (",
            ") VALUES (?, ?, ?, ?, ?, ?)"
         )
-           .add("username,")
-           .add("first_name,")
-           .add("last_name,")
-           .add("email,")
-           .add("password,")
+           .add("username")
+           .add("first_name")
+           .add("last_name")
+           .add("email")
+           .add("password")
            .add("is_enabled")
            .toString();
 
