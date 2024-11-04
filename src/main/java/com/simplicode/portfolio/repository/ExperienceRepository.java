@@ -18,20 +18,20 @@ public class ExperienceRepository {
 
     public void save(Experience experience) {
         String sql = new StringJoiner(
-           " ",
+           ", ",
            "INSERT INTO experiences (",
            ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
         )
-           .add("job_title,")
-           .add("company_name,")
-           .add("started_month,")
-           .add("started_year,")
-           .add("ended_month,")
-           .add("ended_year,")
-           .add("is_still_in_role,")
-           .add("description,")
-           .add("created_date,")
-           .add("last_modified_date,")
+           .add("job_title")
+           .add("company_name")
+           .add("started_month")
+           .add("started_year")
+           .add("ended_month")
+           .add("ended_year")
+           .add("is_still_in_role")
+           .add("description")
+           .add("created_date")
+           .add("last_modified_date")
            .add("user_id")
            .toString();
 
