@@ -54,12 +54,12 @@ public class ExperienceRepository {
 
     public List<Experience> findAllByUserId(Long userId) {
         String sql = new StringJoiner(
-           " ",
+           ", ",
            "SELECT * FROM experiences WHERE user_id = ? ORDER BY ",
            "LIMIT 30"
         )
-           .add("is_still_in_role DESC,")
-           .add("started_year DESC,")
+           .add("is_still_in_role DESC")
+           .add("started_year DESC")
            .add("started_month DESC ")
            .toString();
 
@@ -73,18 +73,18 @@ public class ExperienceRepository {
 
     public void updateById(Long id, Experience experience) {
         String sql = new StringJoiner(
-           " ",
+           ", ",
            "UPDATE experiences SET ",
            "WHERE id = ?"
         )
-           .add("job_title = ?,")
-           .add("company_name = ?,")
-           .add("started_month = ?,")
-           .add("started_year = ?,")
-           .add("ended_month = ?,")
-           .add("ended_year = ?,")
-           .add("is_still_in_role = ?,")
-           .add("description = ?,")
+           .add("job_title = ?")
+           .add("company_name = ?")
+           .add("started_month = ?")
+           .add("started_year = ?")
+           .add("ended_month = ?")
+           .add("ended_year = ?")
+           .add("is_still_in_role = ?")
+           .add("description = ?")
            .add("last_modified_date = ? ")
            .toString();
 
