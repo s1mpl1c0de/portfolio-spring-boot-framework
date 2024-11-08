@@ -52,7 +52,10 @@ public class ExperienceRepository {
         jdbcTemplate.update(sql, args);
     }
 
-    public List<Experience> findAllByUserId(Long userId) {
+    public Integer countAllByUserId(Long userId) {
+        String sql = "SELECT COUNT(*) FROM users WHERE user_id = ?";
+        return jdbcTemplate.queryForObject(sql, Integer.class);
+    }
         String sql = new StringJoiner(
            ", ",
            "SELECT * FROM experiences WHERE user_id = ? ORDER BY ",
