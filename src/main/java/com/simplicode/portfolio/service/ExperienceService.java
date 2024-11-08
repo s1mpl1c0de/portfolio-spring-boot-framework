@@ -4,6 +4,7 @@ import com.simplicode.portfolio.dto.request.ExperienceRequest;
 import com.simplicode.portfolio.dto.response.ExperienceResponse;
 import com.simplicode.portfolio.dto.response.PageNumberPaginationResponse;
 import com.simplicode.portfolio.exception.NotFoundException;
+import com.simplicode.portfolio.helper.ExperienceHelper;
 import com.simplicode.portfolio.model.Experience;
 import com.simplicode.portfolio.repository.ExperienceRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +18,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ExperienceService {
 
-    private final CalendarService calendarService;
     private final AuthenticationHelper authenticationHelper;
+    private final ExperienceHelper experienceHelper;
     private final ExperienceRepository experienceRepository;
     private final ModelMapper modelMapper;
 
@@ -48,7 +49,7 @@ public class ExperienceService {
            .orElseThrow(() -> new NotFoundException("Experience not found"));
 
         return modelMapper.map(experience, ExperienceResponse.class)
-           .setPeriod(getPeriod(experience));
+           .setPeriod(experienceHelper.getPeriod(experience));
     }
 
     public void updateById(Long id, ExperienceRequest experienceRequest) {
