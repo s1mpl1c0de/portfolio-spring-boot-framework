@@ -4,7 +4,10 @@ import com.simplicode.portfolio.dto.request.ExperienceRequest;
 import com.simplicode.portfolio.dto.response.ExperienceResponse;
 import com.simplicode.portfolio.dto.response.PageNumberPaginationResponse;
 import com.simplicode.portfolio.exception.NotFoundException;
+import com.simplicode.portfolio.helper.AuthenticationHelper;
+import com.simplicode.portfolio.helper.ExperienceHelper;
 import com.simplicode.portfolio.model.Experience;
+import com.simplicode.portfolio.model.Page;
 import com.simplicode.portfolio.repository.ExperienceRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -17,30 +20,36 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ExperienceService {
 
-    private final CalendarService calendarService;
+    private final AuthenticationHelper authenticationHelper;
+    private final ExperienceHelper experienceHelper;
     private final ExperienceRepository experienceRepository;
     private final ModelMapper modelMapper;
-    private final UserService userService;
 
     public void save(ExperienceRequest experienceRequest) {
         Experience experience = modelMapper.map(experienceRequest, Experience.class)
            .setCreatedDate(LocalDateTime.now())
            .setLastModifiedDate(null)
-           .setUserId(userService.getRequestUserId());
+           .setUserId(authenticationHelper.getRequestUserId());
 
         experienceRepository.save(experience);
     }
 
-    public PageNumberPaginationResponse findAll() {
-        List<ExperienceResponse> experienceResponses = experienceRepository
-           .findAllByUserId(userService.getRequestUserId()).stream()
+    public Integer countAllByUserId() {
+        return experienceRepository.countAllByUserId(authenticationHelper.getRequestUserId());
+    }
+
+    public PageNumberPaginationResponse<ExperienceResponse> findAll(Page page) {
+        List<ExperienceResponse> results = experienceRepository
+           .findAllByUserId(authenticationHelper.getRequestUserId(), page).stream()
            .map(experience -> modelMapper.map(experience, ExperienceResponse.class)
-              .setPeriod(getPeriod(experience))
+              .setPeriod(experienceHelper.getPeriod(experience))
            ).toList();
 
-        return new PageNumberPaginationResponse()
-           .setCount(experienceResponses.size())
-           .setResults(experienceResponses);
+        return new PageNumberPaginationResponse<ExperienceResponse>()
+           .setCount(results.size())
+           .setNext(page.getNext())
+           .setPrevious(page.getPrevious())
+           .setResults(results);
     }
 
     public ExperienceResponse findById(Long id) {
@@ -48,7 +57,7 @@ public class ExperienceService {
            .orElseThrow(() -> new NotFoundException("Experience not found"));
 
         return modelMapper.map(experience, ExperienceResponse.class)
-           .setPeriod(getPeriod(experience));
+           .setPeriod(experienceHelper.getPeriod(experience));
     }
 
     public void updateById(Long id, ExperienceRequest experienceRequest) {
@@ -63,32 +72,6 @@ public class ExperienceService {
     public void deleteById(Long id) {
         ExperienceResponse experienceResponse = findById(id);
         experienceRepository.deleteById(experienceResponse.getId());
-    }
-
-    private String getPeriod(Experience experience) {
-        return String.format("%s - %s", getStarted(experience), getEnded(experience));
-    }
-
-    private String getStarted(Experience experience) {
-        return String.format(
-           "%s %d",
-           calendarService.getMonthAbbr(experience.getStartedMonth()),
-           experience.getStartedYear()
-        );
-    }
-
-    private String getEnded(Experience experience) {
-        String ended = "Present";
-
-        if (!experience.getIsStillInRole()) {
-            ended = String.format(
-               "%s %d",
-               calendarService.getMonthAbbr(experience.getEndedMonth()),
-               experience.getEndedYear()
-            );
-        }
-
-        return ended;
     }
 
 }

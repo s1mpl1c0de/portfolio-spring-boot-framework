@@ -11,8 +11,6 @@ import com.simplicode.portfolio.repository.UserRepository;
 import com.simplicode.portfolio.validation.UserValidation;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -70,15 +68,6 @@ public class UserService {
     public void deleteById(Long id) {
         UserResponse userResponse = findById(id);
         userRepository.deleteById(userResponse.getId());
-    }
-
-    public Long getRequestUserId() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !(authentication.getPrincipal() instanceof User user)) {
-            return null;
-        }
-
-        return user.getId();
     }
 
 }
