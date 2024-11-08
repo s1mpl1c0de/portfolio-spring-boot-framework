@@ -2,6 +2,7 @@ package com.simplicode.portfolio.repository;
 
 import com.simplicode.portfolio.mapper.ExperienceMapper;
 import com.simplicode.portfolio.model.Experience;
+import com.simplicode.portfolio.model.Page;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -52,18 +53,23 @@ public class ExperienceRepository {
         jdbcTemplate.update(sql, args);
     }
 
-    public List<Experience> findAllByUserId(Long userId) {
+    public Integer countAllByUserId(Long userId) {
+        String sql = "SELECT COUNT(*) FROM users WHERE user_id = ?";
+        return jdbcTemplate.queryForObject(sql, Integer.class);
+    }
+
+    public List<Experience> findAllByUserId(Long userId, Page page) {
         String sql = new StringJoiner(
            ", ",
            "SELECT * FROM experiences WHERE user_id = ? ORDER BY ",
-           "LIMIT 30"
+           "LIMIT ? OFFSET ?"
         )
            .add("is_still_in_role DESC")
            .add("started_year DESC")
            .add("started_month DESC ")
            .toString();
 
-        return jdbcTemplate.query(sql, new ExperienceMapper(), userId);
+        return jdbcTemplate.query(sql, new ExperienceMapper(), userId, page.getLimit(), page.getOffset());
     }
 
     public Optional<Experience> findById(Long id) {
