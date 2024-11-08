@@ -65,30 +65,4 @@ public class ExperienceService {
         experienceRepository.deleteById(experienceResponse.getId());
     }
 
-    private String getPeriod(Experience experience) {
-        return String.format("%s - %s", getStarted(experience), getEnded(experience));
-    }
-
-    private String getStarted(Experience experience) {
-        return String.format(
-           "%s %d",
-           calendarService.getMonthAbbr(experience.getStartedMonth()),
-           experience.getStartedYear()
-        );
-    }
-
-    private String getEnded(Experience experience) {
-        String ended = "Present";
-
-        if (!experience.getIsStillInRole()) {
-            ended = String.format(
-               "%s %d",
-               calendarService.getMonthAbbr(experience.getEndedMonth()),
-               experience.getEndedYear()
-            );
-        }
-
-        return ended;
-    }
-
 }
