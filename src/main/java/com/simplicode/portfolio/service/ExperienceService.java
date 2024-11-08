@@ -18,15 +18,15 @@ import java.util.List;
 public class ExperienceService {
 
     private final CalendarService calendarService;
+    private final AuthenticationHelper authenticationHelper;
     private final ExperienceRepository experienceRepository;
     private final ModelMapper modelMapper;
-    private final UserService userService;
 
     public void save(ExperienceRequest experienceRequest) {
         Experience experience = modelMapper.map(experienceRequest, Experience.class)
            .setCreatedDate(LocalDateTime.now())
            .setLastModifiedDate(null)
-           .setUserId(userService.getRequestUserId());
+           .setUserId(authenticationHelper.getRequestUserId());
 
         experienceRepository.save(experience);
     }
