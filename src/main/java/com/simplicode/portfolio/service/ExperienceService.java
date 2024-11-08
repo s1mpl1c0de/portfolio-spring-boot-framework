@@ -7,6 +7,7 @@ import com.simplicode.portfolio.exception.NotFoundException;
 import com.simplicode.portfolio.helper.AuthenticationHelper;
 import com.simplicode.portfolio.helper.ExperienceHelper;
 import com.simplicode.portfolio.model.Experience;
+import com.simplicode.portfolio.model.Page;
 import com.simplicode.portfolio.repository.ExperienceRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -33,16 +34,22 @@ public class ExperienceService {
         experienceRepository.save(experience);
     }
 
-    public PageNumberPaginationResponse findAll() {
-        List<ExperienceResponse> experienceResponses = experienceRepository
-           .findAllByUserId(userService.getRequestUserId()).stream()
+    public Integer countAllByUserId() {
+        return experienceRepository.countAllByUserId(authenticationHelper.getRequestUserId());
+    }
+
+    public PageNumberPaginationResponse<ExperienceResponse> findAll(Page page) {
+        List<ExperienceResponse> results = experienceRepository
+           .findAllByUserId(authenticationHelper.getRequestUserId(), page).stream()
            .map(experience -> modelMapper.map(experience, ExperienceResponse.class)
-              .setPeriod(getPeriod(experience))
+              .setPeriod(experienceHelper.getPeriod(experience))
            ).toList();
 
-        return new PageNumberPaginationResponse()
-           .setCount(experienceResponses.size())
-           .setResults(experienceResponses);
+        return new PageNumberPaginationResponse<ExperienceResponse>()
+           .setCount(results.size())
+           .setNext(page.getNext())
+           .setPrevious(page.getPrevious())
+           .setResults(results);
     }
 
     public ExperienceResponse findById(Long id) {
