@@ -1,15 +1,12 @@
-package com.simplicode.portfolio.service;
-
-import org.springframework.stereotype.Service;
+package com.simplicode.portfolio.util;
 
 import java.time.Month;
 import java.time.format.TextStyle;
 import java.util.Locale;
 
-@Service
-public class CalendarService {
+public class CalendarUtil {
 
-    public String getMonthAbbr(Short number) {
+    public static String getMonthAbbr(Short number) {
         return number != null ? Month.of(number).getDisplayName(TextStyle.SHORT, Locale.ENGLISH) : null;
     }
 
