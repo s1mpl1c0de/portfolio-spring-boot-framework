@@ -1,16 +1,20 @@
 package com.simplicode.portfolio.repository;
 
+import com.simplicode.portfolio.exception.BadRequestException;
 import com.simplicode.portfolio.mapper.ExperienceMapper;
 import com.simplicode.portfolio.model.Experience;
 import com.simplicode.portfolio.model.Page;
+import com.simplicode.portfolio.query.ExperienceQuery;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.StringJoiner;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class ExperienceRepository {
@@ -18,101 +22,89 @@ public class ExperienceRepository {
     private final JdbcTemplate jdbcTemplate;
 
     public void save(Experience experience) {
-        String sql = new StringJoiner(
-           ", ",
-           "INSERT INTO experiences (",
-           ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-        )
-           .add("job_title")
-           .add("company_name")
-           .add("started_month")
-           .add("started_year")
-           .add("ended_month")
-           .add("ended_year")
-           .add("is_still_in_role")
-           .add("description")
-           .add("created_date")
-           .add("last_modified_date")
-           .add("user_id")
-           .toString();
-
-        Object[] args = new Object[]{
-           experience.getJobTitle(),
-           experience.getCompanyName(),
-           experience.getStartedMonth(),
-           experience.getStartedYear(),
-           experience.getEndedMonth(),
-           experience.getEndedYear(),
-           experience.getIsStillInRole(),
-           experience.getDescription(),
-           experience.getCreatedDate(),
-           experience.getLastModifiedDate(),
-           experience.getUserId()
-        };
-
-        jdbcTemplate.update(sql, args);
+        try {
+            jdbcTemplate.update(
+               ExperienceQuery.INSERT,
+               experience.getJobTitle(),
+               experience.getCompanyName(),
+               experience.getStartedMonth(),
+               experience.getStartedYear(),
+               experience.getEndedMonth(),
+               experience.getEndedYear(),
+               experience.getIsStillInRole(),
+               experience.getDescription(),
+               experience.getCreatedDate(),
+               experience.getLastModifiedDate(),
+               experience.getUserId()
+            );
+        } catch (DataAccessException exception) {
+            log.error("Failed to save Experience: {}", exception.getMessage());
+            throw new BadRequestException();
+        }
     }
 
     public Integer countAllByUserId(Long userId) {
-        String sql = "SELECT COUNT(*) FROM users WHERE user_id = ?";
-        return jdbcTemplate.queryForObject(sql, Integer.class);
+        try {
+            String sql = ExperienceQuery.COUNT_ALL_BY_USER_ID;
+            Class<Integer> requiredType = Integer.class;
+            return jdbcTemplate.queryForObject(sql, requiredType, userId);
+        } catch (DataAccessException exception) {
+            log.error("Failed to count Experiences by userId {}: {}", userId, exception.getMessage());
+            throw new BadRequestException();
+        }
     }
 
     public List<Experience> findAllByUserId(Long userId, Page page) {
-        String sql = new StringJoiner(
-           ", ",
-           "SELECT * FROM experiences WHERE user_id = ? ORDER BY ",
-           "LIMIT ? OFFSET ?"
-        )
-           .add("is_still_in_role DESC")
-           .add("started_year DESC")
-           .add("started_month DESC ")
-           .toString();
-
-        return jdbcTemplate.query(sql, new ExperienceMapper(), userId, page.getLimit(), page.getOffset());
+        try {
+            String sql = ExperienceQuery.FIND_ALL_BY_USER_ID;
+            ExperienceMapper rowMapper = new ExperienceMapper();
+            Object[] args = new Object[]{userId, page.getLimit(), page.getOffset()};
+            return jdbcTemplate.query(sql, rowMapper, args);
+        } catch (DataAccessException exception) {
+            log.error("Failed to find Experiences by userId {}: {}", userId, exception.getMessage());
+            throw new BadRequestException();
+        }
     }
 
     public Optional<Experience> findById(Long id) {
-        String sql = "SELECT * FROM experiences WHERE id = ? LIMIT 1";
-        return jdbcTemplate.query(sql, new ExperienceMapper(), id).stream().findFirst();
+        try {
+            String sql = ExperienceQuery.FIND_BY_ID;
+            ExperienceMapper rowMapper = new ExperienceMapper();
+            return jdbcTemplate.query(sql, rowMapper, id).stream().findFirst();
+        } catch (DataAccessException exception) {
+            log.error("Failed to find Experiences by id {}: {}", id, exception.getMessage());
+            throw new BadRequestException();
+        }
     }
 
     public void updateById(Long id, Experience experience) {
-        String sql = new StringJoiner(
-           ", ",
-           "UPDATE experiences SET ",
-           "WHERE id = ?"
-        )
-           .add("job_title = ?")
-           .add("company_name = ?")
-           .add("started_month = ?")
-           .add("started_year = ?")
-           .add("ended_month = ?")
-           .add("ended_year = ?")
-           .add("is_still_in_role = ?")
-           .add("description = ?")
-           .add("last_modified_date = ? ")
-           .toString();
-
-        Object[] args = new Object[]{
-           experience.getJobTitle(),
-           experience.getCompanyName(),
-           experience.getStartedMonth(),
-           experience.getStartedYear(),
-           experience.getEndedMonth(),
-           experience.getEndedYear(),
-           experience.getIsStillInRole(),
-           experience.getDescription(),
-           experience.getLastModifiedDate(),
-           id
-        };
-
-        jdbcTemplate.update(sql, args);
+        try {
+            jdbcTemplate.update(
+               ExperienceQuery.UPDATE_BY_ID,
+               experience.getJobTitle(),
+               experience.getCompanyName(),
+               experience.getStartedMonth(),
+               experience.getStartedYear(),
+               experience.getEndedMonth(),
+               experience.getEndedYear(),
+               experience.getIsStillInRole(),
+               experience.getDescription(),
+               experience.getLastModifiedDate(),
+               id
+            );
+        } catch (DataAccessException exception) {
+            log.error("Failed to update Experiences by id {}: {}", id, exception.getMessage());
+            throw new BadRequestException();
+        }
     }
 
     public void deleteById(Long id) {
-        String sql = "DELETE FROM experiences WHERE id = ?";
-        jdbcTemplate.update(sql, id);
+        try {
+            jdbcTemplate.update(ExperienceQuery.DELETE_BY_ID, id);
+        } catch (DataAccessException exception) {
+            log.error("Failed to delete Experiences by id {}: {}", id, exception.getMessage());
+            throw new BadRequestException();
+        }
     }
 
 }
