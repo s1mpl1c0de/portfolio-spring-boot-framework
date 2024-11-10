@@ -1,16 +1,20 @@
 package com.simplicode.portfolio.repository;
 
+import com.simplicode.portfolio.exception.BadRequestException;
 import com.simplicode.portfolio.mapper.UserMapper;
 import com.simplicode.portfolio.model.Page;
 import com.simplicode.portfolio.model.User;
+import com.simplicode.portfolio.query.UserQuery;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.StringJoiner;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class UserRepository {
@@ -18,60 +22,87 @@ public class UserRepository {
     private final JdbcTemplate jdbcTemplate;
 
     public void save(User user) {
-        String sql = new StringJoiner(
-           ", ",
-           "INSERT INTO users (",
-           ") VALUES (?, ?, ?, ?, ?, ?)"
-        )
-           .add("username")
-           .add("first_name")
-           .add("last_name")
-           .add("email")
-           .add("password")
-           .add("is_enabled")
-           .toString();
-
-        Object[] args = new Object[]{
-           user.getUsername(),
-           user.getFirstName(),
-           user.getLastName(),
-           user.getEmail(),
-           user.getPassword(),
-           user.getIsEnabled()
-        };
-
-        jdbcTemplate.update(sql, args);
+        try {
+            jdbcTemplate.update(
+               UserQuery.INSERT,
+               user.getUsername(),
+               user.getFirstName(),
+               user.getLastName(),
+               user.getEmail(),
+               user.getPassword(),
+               user.getIsEnabled()
+            );
+        } catch (DataAccessException exception) {
+            log.error("Failed to save User: {}", exception.getMessage());
+            throw new BadRequestException();
+        }
     }
 
     public Integer countAll() {
-        String sql = "SELECT COUNT(*) FROM users";
-        return jdbcTemplate.queryForObject(sql, Integer.class);
+        try {
+            return jdbcTemplate.queryForObject(UserQuery.COUNT_ALL, Integer.class);
+        } catch (DataAccessException exception) {
+            log.error("Failed to count all Users: {}", exception.getMessage());
+            throw new BadRequestException();
+        }
     }
 
     public List<User> findAll(Page page) {
-        String sql = "SELECT * FROM users ORDER BY id DESC LIMIT ? OFFSET ?";
-        return jdbcTemplate.query(sql, new UserMapper(), page.getLimit(), page.getOffset());
+        try {
+            String sql = UserQuery.FIND_ALL;
+            UserMapper rowMapper = new UserMapper();
+            Object[] args = new Object[]{page.getLimit(), page.getOffset()};
+            return jdbcTemplate.query(sql, rowMapper, args);
+        } catch (DataAccessException exception) {
+            log.error("Failed to find all Users: {}", exception.getMessage());
+            throw new BadRequestException();
+        }
     }
 
     public Optional<User> findById(Long id) {
-        String sql = "SELECT * FROM users WHERE id = ? LIMIT 1";
-        return jdbcTemplate.query(sql, new UserMapper(), id).stream().findFirst();
+        try {
+            String sql = UserQuery.FIND_BY_ID;
+            UserMapper rowMapper = new UserMapper();
+            return jdbcTemplate.query(sql, rowMapper, id).stream().findFirst();
+        } catch (DataAccessException exception) {
+            log.error("Failed to find User by id {}: {}", id, exception.getMessage());
+            throw new BadRequestException();
+        }
     }
 
     public Optional<User> findByUsername(String username) {
-        String sql = "SELECT * FROM users WHERE username = ? LIMIT 1";
-        return jdbcTemplate.query(sql, new UserMapper(), username).stream().findFirst();
+        try {
+            String sql = UserQuery.FIND_BY_USERNAME;
+            UserMapper rowMapper = new UserMapper();
+            return jdbcTemplate.query(sql, rowMapper, username).stream().findFirst();
+        } catch (DataAccessException exception) {
+            log.error("Failed to find User by username {}: {}", username, exception.getMessage());
+            throw new BadRequestException();
+        }
     }
 
     public void updateById(Long id, User user) {
-        String sql = "UPDATE users SET first_name = ?, last_name = ?, email = ? WHERE id = ?";
-        Object[] args = new Object[]{user.getFirstName(), user.getLastName(), user.getEmail(), id};
-        jdbcTemplate.update(sql, args);
+        try {
+            jdbcTemplate.update(
+               UserQuery.UPDATE_BY_ID,
+               user.getFirstName(),
+               user.getLastName(),
+               user.getEmail(),
+               id
+            );
+        } catch (DataAccessException exception) {
+            log.error("Failed to update User by id {}: {}", id, exception.getMessage());
+            throw new BadRequestException();
+        }
     }
 
     public void deleteById(Long id) {
-        String sql = "DELETE FROM users WHERE id = ?";
-        jdbcTemplate.update(sql, id);
+        try {
+            jdbcTemplate.update(UserQuery.DELETE_BY_ID, id);
+        } catch (DataAccessException exception) {
+            log.error("Failed to delete User by id {}: {}", id, exception.getMessage());
+            throw new BadRequestException();
+        }
     }
 
 }
