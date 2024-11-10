@@ -16,13 +16,17 @@ public class UserQuery {
        USERS, USERNAME, FIRST_NAME, LAST_NAME, EMAIL, PASSWORD, IS_ENABLED
     );
 
-    public static final String COUNT_ALL = String.format("SELECT COUNT(*) FROM %s", USERS);
+    public static final String COUNT_ALL = String.format(
+       "SELECT COUNT(*) FROM %s", USERS
+    );
 
     public static final String FIND_ALL = String.format(
        "SELECT * FROM %s ORDER BY %s DESC LIMIT ? OFFSET ?", USERS, ID
     );
 
-    public static final String FIND_BY_ID = String.format("SELECT * FROM %s WHERE %s = ? LIMIT 1", USERS, ID);
+    public static final String FIND_BY_ID = String.format(
+       "SELECT * FROM %s WHERE %s = ? LIMIT 1", USERS, ID
+    );
 
     public static final String FIND_BY_USERNAME = String.format(
        "SELECT * FROM %s WHERE %s = ? LIMIT 1", USERS, USERNAME
@@ -33,6 +37,8 @@ public class UserQuery {
        USERS, FIRST_NAME, LAST_NAME, EMAIL, ID
     );
 
-    public static final String DELETE_BY_ID = String.format("DELETE FROM %s WHERE %s = ?", USERS, ID);
+    public static final String DELETE_BY_ID = String.format(
+       "DELETE FROM %s WHERE %s = ?", USERS, ID
+    );
 
 }
