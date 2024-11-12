@@ -11,6 +11,7 @@ import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class UserMapperTest {
@@ -34,13 +35,13 @@ class UserMapperTest {
 
     @Test
     void testMapRow() throws SQLException {
-        Mockito.when(resultSet.getLong("id")).thenReturn(1L);
-        Mockito.when(resultSet.getString("username")).thenReturn(USERNAME);
-        Mockito.when(resultSet.getString("first_name")).thenReturn(FIRST_NAME);
-        Mockito.when(resultSet.getString("last_name")).thenReturn(LAST_NAME);
-        Mockito.when(resultSet.getString("email")).thenReturn(EMAIL);
-        Mockito.when(resultSet.getString("password")).thenReturn(PASSWORD);
-        Mockito.when(resultSet.getBoolean("is_enabled")).thenReturn(IS_ENABLED);
+        when(resultSet.getLong("id")).thenReturn(USER_ID);
+        when(resultSet.getString("username")).thenReturn(USERNAME);
+        when(resultSet.getString("first_name")).thenReturn(FIRST_NAME);
+        when(resultSet.getString("last_name")).thenReturn(LAST_NAME);
+        when(resultSet.getString("email")).thenReturn(EMAIL);
+        when(resultSet.getString("password")).thenReturn(PASSWORD);
+        when(resultSet.getBoolean("is_enabled")).thenReturn(IS_ENABLED);
 
         User user = userMapper.mapRow(resultSet, 1);
 
