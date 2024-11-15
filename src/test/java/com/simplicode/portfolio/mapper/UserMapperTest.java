@@ -3,17 +3,15 @@ package com.simplicode.portfolio.mapper;
 import com.simplicode.portfolio.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
 class UserMapperTest {
 
     private static final long USER_ID = 1L;
@@ -29,7 +27,7 @@ class UserMapperTest {
 
     @BeforeEach
     void setUp() {
-        resultSet = Mockito.mock(ResultSet.class);
+        resultSet = mock(ResultSet.class);
         userMapper = new UserMapper();
     }
 
