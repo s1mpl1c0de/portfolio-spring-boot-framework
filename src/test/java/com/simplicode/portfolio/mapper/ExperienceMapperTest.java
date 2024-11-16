@@ -66,7 +66,7 @@ class ExperienceMapperTest {
         assertEquals(STARTED_YEAR, experience.getStartedYear());
         assertNull(experience.getEndedMonth());
         assertNull(experience.getEndedYear());
-        assertEquals(true, experience.getIsStillInRole());
+        assertTrue(experience.getIsStillInRole());
         assertEquals(DESCRIPTION, experience.getDescription());
         assertEquals(CREATED_DATE.toLocalDateTime(), experience.getCreatedDate());
         assertEquals(LAST_MODIFIED_DATE.toLocalDateTime(), experience.getLastModifiedDate());
