@@ -24,9 +24,11 @@ class ExperienceMapperTest {
     private static final short ENDED_YEAR = 0;
     private static final boolean IS_STILL_IN_ROLE = true;
     private static final String DESCRIPTION = "Development team.";
+
     private static final Timestamp CREATED_DATE = Timestamp.valueOf(
        LocalDateTime.of(2023, 1, 1, 10, 0)
     );
+
     private static final Timestamp LAST_MODIFIED_DATE = Timestamp.valueOf(
        LocalDateTime.of(2023, 5, 1, 15, 0)
     );
